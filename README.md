@@ -47,6 +47,4 @@ Create a basic chat CLI using Go, talking to a NATS server.
 
 ## ⚡ Quick Setup
 
-## 💉 API Test
-
 ## 🛑 Stopping the Application

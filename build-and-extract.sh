@@ -23,7 +23,7 @@ echo "  - ./nats_chat_linux"
 echo "  - ./nats_chat_mac"
 
 echo "Iniciando el servidor NATS con docker-compose..."
-docker-compose up -d || { echo "Error: No se pudo iniciar el servidor NATS"; exit 1; }
+docker compose up -d || { echo "Error: No se pudo iniciar el servidor NATS"; exit 1; }
 echo "Servidor NATS en ejecución."
 
 echo "¡Listo!"

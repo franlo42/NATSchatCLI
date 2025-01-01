@@ -1,7 +1,13 @@
 #Construcción
-FROM golang:1.20 as builder
+FROM golang:1.20
 
 WORKDIR /app
-COPY nats_chat.go .
-RUN GOOS=linux GOARCH=amd64 go build -o nats_chat_linux nats_chat.go
-RUN GOOS=darwin GOARCH=amd64 go build -o nats_chat_mac nats_chat.go
+
+COPY go.mod go.sum ./
+RUN go get github.com/nats-io/nats.go
+
+COPY /cmd/app/main.go .
+
+RUN GOOS=linux GOARCH=amd64 go build -o nats_chat_linux
+RUN GOOS=darwin GOARCH=amd64 go build -o nats_chat_mac
+

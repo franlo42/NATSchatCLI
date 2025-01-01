@@ -13,9 +13,9 @@ import (
 
 func main() {
 	// Definir flags
-	address := flag.String("a", "nats://localhost:4222", "Dirección del servidor NATS (alias: --address)")
-	channel := flag.String("c", "chat.room1", "Nombre del canal (alias: --channel)")
-	name := flag.String("n", "Usuario", "Tu nombre en el chat (alias: --name)")
+	address := flag.String("a", "", "Dirección del servidor NATS (alias: --address)")
+	channel := flag.String("c", "", "Nombre del canal (alias: --channel)")
+	name := flag.String("n", "", "Tu nombre en el chat (alias: --name)")
 
 	// Soporte para nombres largos de flags
 	flag.StringVar(address, "address", *address, "Dirección del servidor NATS")
@@ -49,23 +49,33 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Crear stream para persistencia de mensajes
-	streamName := "CHAT_STREAM"
-	_, err = js.AddStream(&nats.StreamConfig{
-		Name:     streamName,
-		Subjects: []string{*channel},
-		Storage:  nats.FileStorage,
-		MaxAge:   time.Hour,
-	})
+	// Crear un stream por canal si no existe
+	streamName := *channel // Usar el nombre del canal como el nombre del stream
+	_, err = js.StreamInfo(streamName)
 	if err != nil {
-		fmt.Printf("Error al crear el stream: %v\n", err)
+		// Si el stream no existe, crearlo
+		fmt.Println("El stream no existe, creando nuevo stream...")
+		_, err = js.AddStream(&nats.StreamConfig{
+			Name:     streamName,
+			Subjects: []string{*channel},
+			Storage:  nats.FileStorage,
+			MaxAge:   time.Hour, // Guardar mensajes por una hora
+			MaxMsgs:  1000,      // Limitar el número de mensajes
+		})
+		if err != nil {
+			fmt.Printf("Error al crear el stream: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Println("Stream creado correctamente.")
+	} else {
+		fmt.Println("Stream existente encontrado.")
 	}
 
 	// Recuperar mensajes pasados (última hora)
 	fmt.Println("Recuperando mensajes pasados del último período...")
 	subscription, err := js.Subscribe(*channel, func(msg *nats.Msg) {
 		fmt.Printf("[%s]: %s\n", msg.Header.Get("name"), string(msg.Data))
-	}, nats.DeliverLast())
+	}, nats.DeliverAll()) // Cambiado de DeliverLast() a DeliverAll() para obtener todos los mensajes.
 	if err != nil {
 		fmt.Printf("Error al suscribirse al canal: %v\n", err)
 		os.Exit(1)

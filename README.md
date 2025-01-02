@@ -92,5 +92,5 @@ docker-compose down
 > [!TIP]
 > If you want to restart the NATS server:
 > ```bash
-> docker-compose up --d
+> docker-compose up -d
 > ```

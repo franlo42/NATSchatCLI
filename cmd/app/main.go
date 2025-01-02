@@ -11,6 +11,17 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
+func printLogo() {
+	logo := `
+     __  _   _____  __      _           _     ___   __   _____ 
+  /\ \ \/_\ /__   \/ _\ ___| |__   __ _| |_  / __\ / /   \_   \
+ /  \/ //_\\  / /\/\ \ / __| '_ \ / _` + "`" + ` | __|/ /   / /     / /\/
+/ /\  /  _  \/ /   _\ \ (__| | | | (_| | |_/ /___/ /___/\/ /_  
+\_\ \/\_/ \_/\/    \__/\___|_| |_|\__,_|\__\____/\____/\____/  
+`
+	fmt.Println(logo)
+}
+
 func main() {
 	// Definir flags
 	address := flag.String("a", "", "Dirección del servidor NATS (alias: --address)")
@@ -39,6 +50,8 @@ func main() {
 	}
 	defer nc.Close()
 
+	printLogo()
+
 	fmt.Printf("Conectado a NATS en %s\n", *address)
 	fmt.Printf("Canal: %s, Nombre: %s\n", *channel, *name)
 
@@ -50,7 +63,7 @@ func main() {
 	}
 
 	// Crear un stream por canal si no existe
-	streamName := *channel // Usar el nombre del canal como el nombre del stream
+	streamName := fmt.Sprintf("chat_%s", strings.Replace(*channel, ".", "_", -1)) // Usar el nombre del canal como el nombre del stream
 	_, err = js.StreamInfo(streamName)
 	if err != nil {
 		// Si el stream no existe, crearlo
@@ -60,7 +73,6 @@ func main() {
 			Subjects: []string{*channel},
 			Storage:  nats.FileStorage,
 			MaxAge:   time.Hour, // Guardar mensajes por una hora
-			MaxMsgs:  1000,      // Limitar el número de mensajes
 		})
 		if err != nil {
 			fmt.Printf("Error al crear el stream: %v\n", err)
@@ -75,7 +87,7 @@ func main() {
 	fmt.Println("Recuperando mensajes pasados del último período...")
 	subscription, err := js.Subscribe(*channel, func(msg *nats.Msg) {
 		fmt.Printf("[%s]: %s\n", msg.Header.Get("name"), string(msg.Data))
-	}, nats.DeliverAll()) // Cambiado de DeliverLast() a DeliverAll() para obtener todos los mensajes.
+	}, nats.DeliverAll())
 	if err != nil {
 		fmt.Printf("Error al suscribirse al canal: %v\n", err)
 		os.Exit(1)

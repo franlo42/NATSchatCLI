@@ -19,8 +19,7 @@ echo "Limpiando recursos temporales..."
 docker rm $CONTAINER_NAME || { echo "Error: No se pudo eliminar el contenedor temporal"; exit 1; }
 
 echo "Construcción y extracción completadas. Ejecutables disponibles:"
-echo "  - ./nats_chat_linux"
-echo "  - ./nats_chat_mac"
+ls ./nats_chat_* || { echo "Advertencia: No se encontraron binarios generados"; exit 1; }
 
 echo "Iniciando el servidor NATS con docker-compose..."
 docker compose up -d || { echo "Error: No se pudo iniciar el servidor NATS"; exit 1; }

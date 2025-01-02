@@ -11,7 +11,7 @@
   ![Last commit](https://img.shields.io/github/last-commit/franlo42/NATSchatCLI?color=%23005B41)
   ![GitHub repo size](https://img.shields.io/github/repo-size/franlo42/NATSchatCLI?color=%23704264)
 
--description-
+The NATS Chat CLI application allows users to join chat rooms and exchange messages in real time via terminal. Messages are persisted for one hour using NATS JetStream, ensuring they can be replayed when a user joins a channel. It’s designed to be minimal yet powerful, leveraging NATS for efficient and reliable communication.
 </div>
 
 <details>
@@ -20,9 +20,8 @@
 #### ToC
 
 - [Objective](#-objective)
-- [Requirements](#-requirements)
+- [Requirements](#-project-requirements)
 - [Quick Setup](#-quick-setup)
-- [API Test](#-api-test)
 - [Stopping the Application](#-stopping-the-application)
 
 </details>
@@ -31,7 +30,7 @@
 
 Create a basic chat CLI using Go, talking to a NATS server.
 
-## 📋 Requirements
+## 📋 Project Requirements
 
 1. **🦫 Go Application**
    - Accept three parameters: the address of the NATS server, the name of the chat channel, and a name (your name in the chat).
@@ -47,4 +46,52 @@ Create a basic chat CLI using Go, talking to a NATS server.
 
 ## ⚡ Quick Setup
 
+1. Clone the repository.
+```shell
+git clone https://github.com/franlo42/NATSchatCLI.git
+cd NATSchatCLI
+```
+
+2. Run the setup shell script for an automatic deploy of the environment.
+```shell
+./build-and-extract.sh
+```
+> [!NOTE]  
+> Optionally you can also compile the main Go program by hand if you prefer rather than running the setup shell script.
+> ```bash
+> docker-compose down -v 
+> docker-compose up --build
+> ```
+> You will also need to run the NATS server manually.
+> ```bash
+> docker-compose up -d
+> ```
+
+3. Start the client chat application.
+```shell
+./nats_chat_linux -a nats://localhost:4222 -c chatRoom1 -n User1
+```
+> [!IMPORTANT]  
+> You must provide the application with the following parameters.
+> 
+> -a \<adress of the NATS server>
+> 
+> -c \<channel name>
+>
+> -n \<your user name>
+
 ## 🛑 Stopping the Application
+
+1. Stop the client application
+
+You can easily stop the process by pressing the key combination `CTRL+c` in the terminal
+
+2. Stop the NATS server container.
+```bash
+docker-compose down
+```
+> [!TIP]
+> If you want to restart the NATS server:
+> ```bash
+> docker-compose up --d
+> ```

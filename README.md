@@ -20,7 +20,7 @@ The NATS Chat CLI application allows users to join chat rooms and exchange messa
 #### ToC
 
 - [Objective](#-objective)
-- [Requirements](#-project-requirements)
+- [Project Requirements](#-project-requirements)
 - [Quick Setup](#-quick-setup)
 - [Stopping the Application](#-stopping-the-application)
 

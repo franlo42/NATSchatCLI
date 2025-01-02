@@ -59,8 +59,7 @@ cd NATSchatCLI
 > [!NOTE]  
 > Optionally you can also compile the main Go program by hand if you prefer rather than running the setup shell script.
 > ```bash
-> docker-compose down -v 
-> docker-compose up --build
+> go build main.go
 > ```
 > You will also need to run the NATS server manually.
 > ```bash
